@@ -4,22 +4,26 @@ import {
   View,
   TouchableOpacity,
   ScrollView,
-  StyleSheet
+  StyleSheet,
+  TextInput
 } from "react-native";
 import { globalStyles } from "../../styles/global";
 import { UserContext } from "../../contexts/UserContext";
 import Firebase from "../../firebase/firebase";
 import { ActivityIndicator } from "react-native-paper";
-import { FontAwesome, Entypo } from "@expo/vector-icons";
+import {
+  FontAwesome,
+  Entypo,
+  MaterialCommunityIcons
+} from "@expo/vector-icons";
 
 export default function Account() {
   const { currentUserId, currentUserData, setCurrentUserData } = useContext(
     UserContext
   );
 
-  // console.log(currentUserId);
-
   const [isLoading, setIsLoading] = useState(true);
+  const [editMode, setEditMode] = useState(false);
 
   const signOut = () => {
     Firebase.signOut();
@@ -37,7 +41,25 @@ export default function Account() {
   if (!isLoading) {
     return (
       <ScrollView style={styles.container}>
-        <Text style={styles.heading}>Account</Text>
+        <View
+          style={{
+            flex: 1,
+            flexDirection: "row",
+            justifyContent: "space-evenly"
+          }}
+        >
+          <Text style={styles.heading}>Account</Text>
+          <View style={{ marginTop: 50 }}>
+            <TouchableOpacity
+              style={{ height: 50 }}
+              onPress={() => {
+                setEditMode(true);
+              }}
+            >
+              <MaterialCommunityIcons name="pencil-circle-outline" size={30} />
+            </TouchableOpacity>
+          </View>
+        </View>
         <View style={styles.iconTextFlex}>
           <FontAwesome name="user-circle-o" size={30} style={styles.icon} />
           <Text style={styles.userInfoText}>
@@ -53,7 +75,7 @@ export default function Account() {
           <Text style={styles.userInfoText}>
             {currentUserId.phoneNumber
               ? currentUserId.phoneNumber
-              : "Enter phone number"}
+              : "No phone number"}
           </Text>
         </View>
         <TouchableOpacity
@@ -88,8 +110,7 @@ const styles = StyleSheet.create({
     textAlign: "center",
     fontSize: 40,
     color: "black",
-    marginBottom: 15,
-    textAlign: "center"
+    marginBottom: 15
   },
   userInfoText: {
     fontFamily: "raleway-regular",

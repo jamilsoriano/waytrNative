@@ -7,8 +7,8 @@ import { PendingOrdersContext } from "../../../contexts/PendingOrdersContext";
 import DropDown from "../components/pendingDropDown";
 
 export default function PendingOrders({ toggleOrderView }) {
-  const { pendingOrders, total, setTotal } = useContext(PendingOrdersContext);
-  let pendingTotal = 0;
+  const { pendingOrders } = useContext(PendingOrdersContext);
+  let total = 0;
 
   return (
     <View>
@@ -32,7 +32,7 @@ export default function PendingOrders({ toggleOrderView }) {
         <ScrollView>
           {pendingOrders.length > 0 &&
             pendingOrders.map((order, i) => {
-              setTotal(pendingTotal + order.price * order.quantity);
+              total = total + order.price * order.quantity;
               return <DropDown key={i} order={order} i={i} />;
             })}
           <DataTable.Row>

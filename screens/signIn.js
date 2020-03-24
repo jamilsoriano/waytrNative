@@ -7,9 +7,8 @@ export default function SignIn({ navigation }) {
   const [LogInData, setLogInData] = useState({ email: "", password: "" });
 
   const LogIn = async event => {
-    let response = await Firebase.loginEmail(
-      LogInData.email,
-      LogInData.password
+    await Firebase.loginEmail(LogInData.email, LogInData.password).catch(err =>
+      console.log(error)
     );
   };
 

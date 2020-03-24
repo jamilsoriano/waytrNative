@@ -41,7 +41,9 @@ function createEatStack() {
 
 const TabNavigation = ({ user }) => {
   const { setCurrentUserId } = useContext(UserContext);
+
   setCurrentUserId(user);
+
   return (
     <NavigationContainer>
       <Tab.Navigator
