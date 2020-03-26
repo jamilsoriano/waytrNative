@@ -17,6 +17,8 @@ import OrderMenu from "../screens/eat/orderMenu";
 import OrderItem from "../screens/eat/orderItem";
 import Tables from "../screens/tables/tables";
 import TableOrders from "../screens/tables/tableOrder";
+import PendingOrders from "../screens/eat/orderComponents/pendingOrders";
+import DBOrders from "../screens/eat/orderComponents/dbOrders";
 
 const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();
@@ -51,9 +53,25 @@ function createOrderStack() {
 
 function createSeatedTab() {
   return (
-    <TopTab.Navigator>
-      <TopTab.Screen name="PendingOrders" />
-      <TopTab.Screen name="DBOrders" />
+    <TopTab.Navigator
+      headerMode="none"
+      tabBarOptions={{
+        indicatorStyle: {
+          backgroundColor: "#5CDC58"
+        },
+        pressOpacity: "#5CDC58"
+      }}
+    >
+      <TopTab.Screen
+        name="PendingOrdersStack"
+        children={createMenuOrderStack}
+        options={{ tabBarLabel: "Pending" }}
+      />
+      <TopTab.Screen
+        name="DBOrders"
+        component={DBOrders}
+        options={{ tabBarLabel: "Sent" }}
+      />
     </TopTab.Navigator>
   );
 }
@@ -85,15 +103,43 @@ function createTableStack() {
   );
 }
 
-function createEatStack() {
+function createMenuOrderStack() {
   return (
     <Stack.Navigator headerMode="none">
-      <Stack.Screen name="RestList" component={RestList} />
-      <Stack.Screen name="RestMenu" component={RestMenu} />
-      <Stack.Screen name="TableConfirmation" component={TableConfirmation} />
-      <Stack.Screen name="Seated" component={Seated} />
+      <TopTab.Screen name="PendingOrders" component={PendingOrders} />
       <Stack.Screen name="OrderMenu" component={OrderMenu} />
       <Stack.Screen name="OrderItem" component={OrderItem} />
+    </Stack.Navigator>
+  );
+}
+
+function createEatStack() {
+  return (
+    <Stack.Navigator>
+      <Stack.Screen
+        name="RestList"
+        component={RestList}
+        options={{ headerShown: false }}
+      />
+      <Stack.Screen
+        name="RestMenu"
+        component={RestMenu}
+        options={{
+          headerTitle: "Menu of ",
+          headerTitleAlign: "center",
+          headerTransparent: true
+        }}
+      />
+      <Stack.Screen
+        name="TableConfirmation"
+        component={TableConfirmation}
+        options={{ headerTransparent: true, headerTitle: "" }}
+      />
+      <Stack.Screen
+        name="Seated"
+        children={createSeatedTab}
+        options={{ headerTitleAlign: "center", headerLeft: null }}
+      />
     </Stack.Navigator>
   );
 }

@@ -30,53 +30,7 @@ export default function RestMenu({ navigation, route }) {
   if (!isLoading && menu) {
     if (Object.keys(menu).length > 0) {
       return (
-        <View style={{ flex: 1 }}>
-          <View>
-            <View
-              style={{
-                flex: 1,
-                flexDirection: "row",
-                justifyContent: "space-between",
-                marginBottom: 50,
-                marginTop: 30
-              }}
-            >
-              <TouchableOpacity onPress={goBack} style={{ height: 50 }}>
-                <Entypo
-                  name="chevron-left"
-                  size={32}
-                  style={{ marginLeft: 20 }}
-                />
-              </TouchableOpacity>
-              <Text
-                style={{
-                  fontFamily: "raleway-bold",
-                  fontSize: 40,
-                  color: "#333",
-                  height: 50
-                }}
-              >
-                {restName}
-              </Text>
-              <TouchableOpacity
-                onPress={() => {
-                  navigation.navigate("TableConfirmation", {
-                    restName,
-                    restTableMin,
-                    restTableMax,
-                    restUID
-                  });
-                }}
-                style={{ height: 50 }}
-              >
-                <Entypo
-                  name="chevron-right"
-                  size={32}
-                  style={{ marginRight: 20 }}
-                />
-              </TouchableOpacity>
-            </View>
-          </View>
+        <View style={{ flex: 1, marginTop: 80 }}>
           <Divider />
           <ScrollView>
             {menu.items.map((item, i) => (

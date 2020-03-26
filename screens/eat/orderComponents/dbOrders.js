@@ -1,21 +1,39 @@
-import React from "react";
+import React, { useState, useContext, useEffect } from "react";
 import { View, ScrollView, Text } from "react-native";
 import { TouchableOpacity, StyleSheet } from "react-native";
 import { DataTable, ActivityIndicator } from "react-native-paper";
+import { globalStyles } from "../../../styles/global";
+import Firebase from "../../../firebase/firebase";
 import { Entypo } from "@expo/vector-icons";
 import DropDown from "../components/DBDropDown";
+import { DBOrdersContext } from "../../../contexts/dbOrdersContext";
+import { UserContext } from "../../../contexts/UserContext";
 
-export default function DBOrders({ toggleOrderView, dbOrders, isLoading }) {
+export default function DBOrders() {
+  const {
+    isLoading,
+    setIsLoading,
+    dbOrders,
+    setDbOrders,
+    orderDocId,
+    setOrderDocId
+  } = useContext(DBOrdersContext);
+  const { currentUserId } = useContext(UserContext);
+
   let DBtotal = 0;
 
+  function completeOrder() {
+    if (dbOrders) {
+      Firebase.db
+        .collection("orders")
+        .doc(orderDocId)
+        .update({ orderCompleted: true });
+    }
+  }
+
   return (
-    <View>
-      <View style={styles.viewContainer}>
-        <Text style={styles.heading2}>Sent Orders</Text>
-        <TouchableOpacity onPress={toggleOrderView}>
-          <Entypo name="chevron-right" size={28} style={{ marginLeft: 20 }} />
-        </TouchableOpacity>
-      </View>
+    <View style={{ flex: 1 }}>
+      <View style={styles.viewContainer}></View>
       <DataTable style={{ marginTop: 25 }}>
         <DataTable.Header>
           <DataTable.Title style={{ flex: 1 }}></DataTable.Title>
@@ -49,6 +67,48 @@ export default function DBOrders({ toggleOrderView, dbOrders, isLoading }) {
           />
         )}
       </DataTable>
+      <View
+        style={{
+          flex: 1,
+          flexDirection: "row",
+          justifyContent: "space-around",
+          position: "absolute",
+          bottom: 20,
+          left: 20,
+          right: 20
+        }}
+      >
+        <TouchableOpacity
+          onPress={() => {
+            navigation.navigate("OrderMenu", {
+              restName,
+              restUID
+            });
+          }}
+          style={{
+            ...globalStyles.logInButton,
+            minWidth: 120
+          }}
+        >
+          <Text style={globalStyles.buttonText}>Menu</Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={{
+            ...globalStyles.logInButton,
+            minWidth: 120
+          }}
+        >
+          <Text style={globalStyles.buttonText}>Bill</Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={{
+            ...globalStyles.logInButton,
+            minWidth: 120
+          }}
+        >
+          <Text style={globalStyles.buttonText}>Call Staff</Text>
+        </TouchableOpacity>
+      </View>
     </View>
   );
 }

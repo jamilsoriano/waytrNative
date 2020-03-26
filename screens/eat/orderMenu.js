@@ -9,7 +9,6 @@ export default function OrderMenu({ navigation, route }) {
   const [menu, setMenu] = useState();
   const [isLoading, setIsLoading] = useState(true);
   let restUID = route.params.restUID;
-  const restName = route.params.restName;
 
   Firebase.getRestaurantMenu(restUID)
     .then(response => {
@@ -30,37 +29,6 @@ export default function OrderMenu({ navigation, route }) {
     if (Object.keys(menu).length > 0) {
       return (
         <View style={{ flex: 1 }}>
-          <View>
-            <View
-              style={{
-                flex: 1,
-                flexDirection: "row",
-                marginBottom: 50,
-                marginTop: 30,
-                width: 500
-              }}
-            >
-              <TouchableOpacity onPress={goBack} style={{ height: 50 }}>
-                <Entypo
-                  name="chevron-left"
-                  size={32}
-                  style={{ marginLeft: 20, marginTop: 5 }}
-                />
-              </TouchableOpacity>
-              <Text
-                style={{
-                  fontFamily: "raleway-bold",
-                  fontSize: 40,
-                  color: "#333",
-                  height: 50,
-                  marginLeft: 30
-                }}
-              >
-                {restName}
-              </Text>
-            </View>
-          </View>
-          <Divider />
           <ScrollView>
             {menu.items.map((item, i) => (
               <TouchableOpacity

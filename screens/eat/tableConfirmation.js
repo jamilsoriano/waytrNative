@@ -1,13 +1,16 @@
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import { View, Text, TextInput, TouchableOpacity } from "react-native";
 import { globalStyles } from "../../styles/global";
+import { PendingOrdersContext } from "../../contexts/PendingOrdersContext";
 
 export default function TableConfirmation({ navigation, route }) {
+  const { tableNum, setTableNum, setRestUID, setRestName } = useContext(
+    PendingOrdersContext
+  );
+  setRestName(route.params.restName);
+  setRestUID(route.params.restUID);
   const restTableMax = route.params.restTableMax;
   const restTableMin = route.params.restTableMin;
-  const restName = route.params.restName;
-  const restUID = route.params.restUID;
-  const [tableNum, setTableNum] = useState();
   const defaultMessage =
     "Please note that once seated, you will be unable to join another table until the order is completed.";
   const [subText, setSubText] = useState({
@@ -17,7 +20,7 @@ export default function TableConfirmation({ navigation, route }) {
 
   function confirmTable() {
     if (tableNum >= restTableMin && tableNum <= restTableMax) {
-      navigation.navigate("Seated", { restUID, restName, tableNum });
+      navigation.navigate("Seated");
     } else {
       setSubText({
         message: `${restName} table numbers range from ${restTableMin} to ${restTableMax} - please enter a valid table number.`,
