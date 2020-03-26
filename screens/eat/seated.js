@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useContext } from "react";
-import { View, Text, TouchableOpacity } from "react-native";
+import { View, Text, TouchableOpacity, ScrollView } from "react-native";
 import { globalStyles } from "../../styles/global";
 import { Divider } from "react-native-paper";
 import PendingOrders from "./orderComponents/pendingOrders";
@@ -29,6 +29,7 @@ export default function Seated({ navigation, route }) {
   useEffect(() => {
     socket = io(ENDPOINT);
     setSocket(socket);
+    setPendingOrders([]);
     socket.emit(
       "join",
       {
@@ -142,15 +143,17 @@ export default function Seated({ navigation, route }) {
         Eating at {restName} - Table {tableNum}
       </Text>
       <Divider style={{ marginBottom: 8 }} />
-      {orderToggle ? (
-        <DBOrders
-          toggleOrderView={toggleOrderView}
-          dbOrders={dbOrders}
-          isLoading={isLoading}
-        />
-      ) : (
-        <PendingOrders toggleOrderView={toggleOrderView} />
-      )}
+      <ScrollView>
+        {orderToggle ? (
+          <DBOrders
+            toggleOrderView={toggleOrderView}
+            dbOrders={dbOrders}
+            isLoading={isLoading}
+          />
+        ) : (
+          <PendingOrders toggleOrderView={toggleOrderView} />
+        )}
+      </ScrollView>
       <View
         style={{
           flex: 1,

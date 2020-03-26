@@ -3,9 +3,10 @@ import { NavigationContainer } from "@react-navigation/native";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import Home from "../screens/home";
 import Account from "../screens/account/account";
-import { FontAwesome } from "@expo/vector-icons";
+import { FontAwesome, MaterialIcons } from "@expo/vector-icons";
 import { UserContext } from "../contexts/UserContext";
 import { createStackNavigator } from "@react-navigation/stack";
+import { createMaterialTopTabNavigator } from "@react-navigation/material-top-tabs";
 import OrdersList from "../screens/orders/ordersList";
 import OrderDetails from "../screens/orders/orderDetails";
 import RestList from "../screens/eat/restList";
@@ -14,18 +15,76 @@ import TableConfirmation from "../screens/eat/tableConfirmation";
 import Seated from "../screens/eat/seated";
 import OrderMenu from "../screens/eat/orderMenu";
 import OrderItem from "../screens/eat/orderItem";
+import Tables from "../screens/tables/tables";
+import TableOrders from "../screens/tables/tableOrder";
 
 const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();
+const TopTab = createMaterialTopTabNavigator();
 
 function createOrderStack() {
   return (
-    <Stack.Navigator headerMode="none">
-      <Stack.Screen name="OrderList" component={OrdersList} />
-      <Stack.Screen name="OrderDetails" component={OrderDetails} />
+    <Stack.Navigator>
+      <Stack.Screen
+        name="OrderList"
+        component={OrdersList}
+        options={{
+          headerTitle: "Orders",
+          headerTitleAlign: "center",
+          headerTransparent: true,
+          headerTitleStyle: { fontSize: 35 }
+        }}
+      />
+      <Stack.Screen
+        name="OrderDetails"
+        component={OrderDetails}
+        options={{
+          headerTitle: "",
+          headerTitleAlign: "center",
+          headerTransparent: true,
+          headerTitleStyle: { fontSize: 35 }
+        }}
+      />
     </Stack.Navigator>
   );
 }
+
+function createSeatedTab() {
+  return (
+    <TopTab.Navigator>
+      <TopTab.Screen name="PendingOrders" />
+      <TopTab.Screen name="DBOrders" />
+    </TopTab.Navigator>
+  );
+}
+
+function createTableStack() {
+  return (
+    <Stack.Navigator>
+      <Stack.Screen
+        name="TableList"
+        component={Tables}
+        options={{
+          headerTitle: "Tables",
+          headerTitleAlign: "center",
+          headerTransparent: true,
+          headerTitleStyle: { fontSize: 35 }
+        }}
+      />
+      <Stack.Screen
+        name="TableOrders"
+        component={TableOrders}
+        options={{
+          headerTitle: "Table Order",
+          headerTitleAlign: "center",
+          headerTransparent: true,
+          headerTitleStyle: { fontSize: 35 }
+        }}
+      />
+    </Stack.Navigator>
+  );
+}
+
 function createEatStack() {
   return (
     <Stack.Navigator headerMode="none">
@@ -49,18 +108,32 @@ const TabNavigation = ({ user }) => {
       <Tab.Navigator
         screenOptions={({ route }) => ({
           tabBarIcon: ({ color, size }) => {
-            let iconName;
-
-            if (route.name === "Home") {
-              iconName = "home";
-            } else if (route.name === "Eat") {
-              iconName = "cutlery";
-            } else if (route.name === "Orders") {
-              iconName = "list-alt";
-            } else if (route.name === "Account") {
-              iconName = "user-circle-o";
+            switch (route.name) {
+              case "Home":
+                return <FontAwesome name="home" size={size} color={color} />;
+              case "Tables":
+                return (
+                  <MaterialIcons
+                    name="room-service"
+                    size={size}
+                    color={color}
+                  />
+                );
+              case "Orders":
+                return (
+                  <FontAwesome name="list-alt" size={size} color={color} />
+                );
+              case "Restaurant":
+                return (
+                  <MaterialIcons name="settings" size={size} color={color} />
+                );
+              case "Account":
+                return (
+                  <FontAwesome name="user-circle-o" size={size} color={color} />
+                );
+              case "Eat":
+                return <FontAwesome name="cutlery" size={size} color={color} />;
             }
-            return <FontAwesome name={iconName} size={size} color={color} />;
           }
         })}
         tabBarOptions={{
@@ -68,10 +141,21 @@ const TabNavigation = ({ user }) => {
           inactiveTintColor: "gray"
         }}
       >
-        <Tab.Screen name="Home" component={Home} />
-        <Tab.Screen name="Eat" children={createEatStack} />
-        <Tab.Screen name="Orders" children={createOrderStack} />
-        <Tab.Screen name="Account" component={Account} />
+        {user.restaurantManager ? (
+          <>
+            <Tab.Screen name="Home" component={Home} />
+            <Tab.Screen name="Tables" children={createTableStack} />
+            <Tab.Screen name="Orders" children={createOrderStack} />
+            <Tab.Screen name="Restaurant" component={Account} />
+          </>
+        ) : (
+          <>
+            <Tab.Screen name="Home" component={Home} />
+            <Tab.Screen name="Eat" children={createEatStack} />
+            <Tab.Screen name="Orders" children={createOrderStack} />
+            <Tab.Screen name="Account" component={Account} />
+          </>
+        )}
       </Tab.Navigator>
     </NavigationContainer>
   );

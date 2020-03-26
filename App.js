@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import * as Font from "expo-font";
 import { AppLoading } from "expo";
 import TabNavigation from "./routes/tabNavigation";
@@ -36,9 +36,25 @@ const getFonts = () =>
 export default function App() {
   const [user, initialising] = useAuthState(Firebase.auth);
   const [fontsLoaded, setFontsLoaded] = useState(false);
+  const [userDataLoading, setUserDataLoading] = useState(true);
+
+  useEffect(() => {
+    setUserDataLoading(true);
+    if (user) {
+      user.getIdTokenResult().then(idTokenResult => {
+        user.admin = idTokenResult.claims.admin ? true : false;
+        user.restaurantManager = idTokenResult.claims.restaurantID
+          ? idTokenResult.claims.restaurantID
+          : null;
+        setUserDataLoading(false);
+      });
+    } else if (!initialising) {
+      setUserDataLoading(false);
+    }
+  }, [user, initialising]);
 
   if (fontsLoaded) {
-    if (!initialising) {
+    if (!initialising && !userDataLoading) {
       return user ? (
         <UserContextProvider>
           <RestaurantListContextProvider>

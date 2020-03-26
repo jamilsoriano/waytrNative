@@ -3,17 +3,19 @@ import { Text, ScrollView, View } from "react-native";
 import { globalStyles } from "../../styles/global";
 import { UserContext } from "../../contexts/UserContext";
 import Firebase from "../../firebase/firebase";
-import { ActivityIndicator, Card, Title, Paragraph } from "react-native-paper";
+import { ActivityIndicator, Card, Paragraph } from "react-native-paper";
+import { useHeaderHeight } from "@react-navigation/stack";
 
 export default function OrdersList({ navigation }) {
+  const headerHeight = useHeaderHeight();
   const { currentUserId } = useContext(UserContext);
-  const [isLoading, setIsLoading] = useState(true)
+  const [isLoading, setIsLoading] = useState(true);
   const [orders, setOrders] = useState([]);
 
   useEffect(() => {
     Firebase.getPreviousOrders(currentUserId.uid).then(response => {
       setOrders(response);
-      setIsLoading(false)
+      setIsLoading(false);
     });
   }, []);
 
@@ -45,19 +47,7 @@ export default function OrdersList({ navigation }) {
 
   if (!isLoading) {
     return (
-      <View style={{ flex: 1 }}>
-        <Text
-          style={{
-            marginTop: 45,
-            fontFamily: "raleway-bold",
-            textAlign: "center",
-            fontSize: 40,
-            color: "#333",
-            marginBottom: 5
-          }}
-        >
-          Orders
-        </Text>
+      <View style={{ flex: 1, marginTop: headerHeight }}>
         <ScrollView
           style={{
             ...globalStyles.container,
@@ -65,7 +55,7 @@ export default function OrdersList({ navigation }) {
             paddingHorizontal: 15
           }}
         >
-          {orders.length > 0 ?
+          {orders.length > 0 ? (
             orders.map((order, i) => (
               <Card
                 style={{ marginTop: 5 }}
@@ -89,7 +79,12 @@ export default function OrdersList({ navigation }) {
                   </Paragraph>
                 </Card.Content>
               </Card>
-            )) : <Text style={{ fontFamily: "raleway-light", textAlign: "center" }}>No previous orders made. </Text>}
+            ))
+          ) : (
+            <Text style={{ fontFamily: "raleway-light", textAlign: "center" }}>
+              No previous orders made.{" "}
+            </Text>
+          )}
         </ScrollView>
       </View>
     );

@@ -1,16 +1,13 @@
 import React from "react";
-import { TouchableOpacity, Text, View, ScrollView } from "react-native";
+import { Text, ScrollView } from "react-native";
 import { globalStyles } from "../../styles/global";
 import { Card, Title, Divider, DataTable } from "react-native-paper";
 
-export default function OrderDetails({ navigation, route }) {
+export default function OrderDetails({ route }) {
   let restName = route.params.restName;
   let orders = route.params.orders;
   let total = 0.0;
 
-  function goBack() {
-    navigation.pop();
-  }
   return (
     <ScrollView
       style={{
@@ -20,7 +17,9 @@ export default function OrderDetails({ navigation, route }) {
       }}
     >
       <Card style={{ marginTop: 35 }}>
-        <Title style={globalStyles.titleText}>{restName}</Title>
+        <Title style={{ textAlign: "center", fontSize: 35, paddingTop: 10 }}>
+          {restName}
+        </Title>
 
         <Card.Cover
           style={{
@@ -77,17 +76,6 @@ export default function OrderDetails({ navigation, route }) {
         </Text>
         <Card.Actions></Card.Actions>
       </Card>
-
-      <TouchableOpacity
-        onPress={goBack}
-        style={{
-          ...globalStyles.logInButton,
-          marginTop: 10,
-          marginBottom: 10
-        }}
-      >
-        <Text style={globalStyles.buttonText}>Go back to orders</Text>
-      </TouchableOpacity>
     </ScrollView>
   );
 }

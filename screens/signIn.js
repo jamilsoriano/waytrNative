@@ -6,8 +6,8 @@ import Firebase from "../firebase/firebase";
 export default function SignIn({ navigation }) {
   const [LogInData, setLogInData] = useState({ email: "", password: "" });
 
-  const LogIn = async event => {
-    await Firebase.loginEmail(LogInData.email, LogInData.password).catch(err =>
+  const LogIn = () => {
+    Firebase.loginEmail(LogInData.email, LogInData.password).catch(err =>
       console.log(error)
     );
   };

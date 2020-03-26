@@ -4,7 +4,7 @@ export const UserContext = createContext();
 
 const UserContextProvider = ({ children }) => {
   const [currentUserId, setCurrentUserId] = useState({
-    uid: null,
+    restaurantManager: null,
     admin: false
   });
   const [currentUserData, setCurrentUserData] = useState({
