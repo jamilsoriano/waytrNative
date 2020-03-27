@@ -15,9 +15,13 @@ import { PendingOrdersContext } from "../../contexts/PendingOrdersContext";
 export default function OrderItem({ navigation, route }) {
   const [quantity, setQuantity] = useState(0);
   const [note, setNote] = useState("");
-  const { pendingOrders, setPendingOrders, socket } = useContext(
-    PendingOrdersContext
-  );
+  const {
+    pendingOrders,
+    setPendingOrders,
+    socket,
+    total,
+    setTotal
+  } = useContext(PendingOrdersContext);
 
   let item = route.params.item;
   let price = route.params.price;
@@ -46,6 +50,7 @@ export default function OrderItem({ navigation, route }) {
       }
 
       socket.emit("sendTempOrder", TPOrders, () => {});
+      setTotal(total + orderItem.price * orderItem.quantity);
       setPendingOrders(TPOrders);
       navigation.pop();
     }

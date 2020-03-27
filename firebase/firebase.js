@@ -179,6 +179,13 @@ class Firebase {
         return error;
       });
   }
+
+  completeOrder({ dbOrders, orderDocId }) {
+    this.db
+      .collection("orders")
+      .doc(orderDocId)
+      .update({ orderCompleted: true });
+  }
 }
 
 export default new Firebase();

@@ -3,19 +3,19 @@ import React, { createContext, useState } from "react";
 export const PendingOrdersContext = createContext();
 
 const PendingOrdersContextProvider = ({ children }) => {
-  const [tableNum, setTableNum] = useState();
-  const [restName, setRestName] = useState();
-  const [restUID, setRestUID] = useState();
+  const [pendingOrders, setPendingOrders] = useState([]);
+  const [socket, setSocket] = useState();
+  const [total, setTotal] = useState(0);
 
   return (
     <PendingOrdersContext.Provider
       value={{
-        tableNum,
-        setTableNum,
-        restName,
-        setRestName,
-        restUID,
-        setRestUID
+        pendingOrders,
+        setPendingOrders,
+        socket,
+        setSocket,
+        total,
+        setTotal
       }}
     >
       {children}

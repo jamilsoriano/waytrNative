@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useContext } from "react";
+import React, { useEffect, useContext } from "react";
 import { View, ScrollView, Text } from "react-native";
 import { TouchableOpacity, StyleSheet } from "react-native";
 import { DataTable } from "react-native-paper";
@@ -9,15 +9,21 @@ import Firebase from "../../../firebase/firebase";
 import { PendingOrdersContext } from "../../../contexts/PendingOrdersContext";
 import DropDown from "../components/pendingDropDown";
 import { UserContext } from "../../../contexts/UserContext";
+import { SeatingContext } from "../../../contexts/SeatingContext";
 
 let socket;
 
 export default function PendingOrders({ navigation }) {
-  const [pendingOrders, setPendingOrders] = useState([]);
-  const { currentUserId } = useContext(UserContext);
-  const { tableNum, restName, restUID } = useContext(PendingOrdersContext);
   const {
-    isLoading,
+    pendingOrders,
+    setPendingOrders,
+    setSocket,
+    total,
+    setTotal
+  } = useContext(PendingOrdersContext);
+  const { currentUserId } = useContext(UserContext);
+  const { tableNum, restName, restUID } = useContext(SeatingContext);
+  const {
     setIsLoading,
     dbOrders,
     setDbOrders,
@@ -27,11 +33,13 @@ export default function PendingOrders({ navigation }) {
 
   const ENDPOINT = "http://192.168.1.31:4000";
   let currentDateTime = Math.round(new Date().getTime() / 1000);
-  let total = 0;
 
   useEffect(() => {
     socket = io(ENDPOINT);
+    setSocket(socket);
+    setTotal(0);
     setPendingOrders([]);
+    setDbOrders([]);
     socket.emit(
       "join",
       {
@@ -46,6 +54,10 @@ export default function PendingOrders({ navigation }) {
 
     socket.on("order", order => {
       setPendingOrders(order);
+    });
+
+    socket.on("orderSent", () => {
+      setPendingOrders([]);
     });
 
     return () => {
@@ -136,7 +148,6 @@ export default function PendingOrders({ navigation }) {
         <ScrollView>
           {pendingOrders.length > 0 &&
             pendingOrders.map((order, i) => {
-              total = total + order.price * order.quantity;
               return <DropDown key={i} order={order} i={i} />;
             })}
           <DataTable.Row>
@@ -173,6 +184,7 @@ export default function PendingOrders({ navigation }) {
           <Text style={globalStyles.buttonText}>Menu</Text>
         </TouchableOpacity>
         <TouchableOpacity
+          onPress={() => sendOrder()}
           style={{
             ...globalStyles.logInButton,
             minWidth: 120

@@ -1,12 +1,16 @@
 import React, { useState, useContext } from "react";
 import { View, Text, TextInput, TouchableOpacity } from "react-native";
 import { globalStyles } from "../../styles/global";
-import { PendingOrdersContext } from "../../contexts/PendingOrdersContext";
+import { SeatingContext } from "../../contexts/SeatingContext";
 
 export default function TableConfirmation({ navigation, route }) {
-  const { tableNum, setTableNum, setRestUID, setRestName } = useContext(
-    PendingOrdersContext
-  );
+  const {
+    tableNum,
+    setTableNum,
+    setRestUID,
+    setRestName,
+    restName
+  } = useContext(SeatingContext);
   setRestName(route.params.restName);
   setRestUID(route.params.restUID);
   const restTableMax = route.params.restTableMax;

@@ -14,6 +14,7 @@ import PendingOrdersContextProvider from "./contexts/PendingOrdersContext";
 import { YellowBox } from "react-native";
 import _ from "lodash";
 import DBOrdersContextProvider from "./contexts/dbOrdersContext";
+import SeatingContextProvider from "./contexts/SeatingContext";
 
 YellowBox.ignoreWarnings(["Setting a timer"]);
 YellowBox.ignoreWarnings([
@@ -60,11 +61,13 @@ export default function App() {
         <UserContextProvider>
           <RestaurantListContextProvider>
             <PaperProvider>
-              <PendingOrdersContextProvider>
-                <DBOrdersContextProvider>
-                  <TabNavigation user={user} styles={globalStyles.tabNav} />
-                </DBOrdersContextProvider>
-              </PendingOrdersContextProvider>
+              <SeatingContextProvider>
+                <PendingOrdersContextProvider>
+                  <DBOrdersContextProvider>
+                    <TabNavigation user={user} styles={globalStyles.tabNav} />
+                  </DBOrdersContextProvider>
+                </PendingOrdersContextProvider>
+              </SeatingContextProvider>
             </PaperProvider>
           </RestaurantListContextProvider>
         </UserContextProvider>

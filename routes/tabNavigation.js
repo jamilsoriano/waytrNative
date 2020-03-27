@@ -12,7 +12,6 @@ import OrderDetails from "../screens/orders/orderDetails";
 import RestList from "../screens/eat/restList";
 import RestMenu from "../screens/eat/restMenu";
 import TableConfirmation from "../screens/eat/tableConfirmation";
-import Seated from "../screens/eat/seated";
 import OrderMenu from "../screens/eat/orderMenu";
 import OrderItem from "../screens/eat/orderItem";
 import Tables from "../screens/tables/tables";
@@ -55,6 +54,7 @@ function createSeatedTab() {
   return (
     <TopTab.Navigator
       headerMode="none"
+      backBehavior="initialRoute"
       tabBarOptions={{
         indicatorStyle: {
           backgroundColor: "#5CDC58"
@@ -64,7 +64,7 @@ function createSeatedTab() {
     >
       <TopTab.Screen
         name="PendingOrdersStack"
-        children={createMenuOrderStack}
+        component={PendingOrders}
         options={{ tabBarLabel: "Pending" }}
       />
       <TopTab.Screen
@@ -103,17 +103,7 @@ function createTableStack() {
   );
 }
 
-function createMenuOrderStack() {
-  return (
-    <Stack.Navigator headerMode="none">
-      <TopTab.Screen name="PendingOrders" component={PendingOrders} />
-      <Stack.Screen name="OrderMenu" component={OrderMenu} />
-      <Stack.Screen name="OrderItem" component={OrderItem} />
-    </Stack.Navigator>
-  );
-}
-
-function createEatStack() {
+function createEatStack({ route }) {
   return (
     <Stack.Navigator>
       <Stack.Screen
@@ -138,7 +128,17 @@ function createEatStack() {
       <Stack.Screen
         name="Seated"
         children={createSeatedTab}
-        options={{ headerTitleAlign: "center", headerLeft: null }}
+        options={{ headerTitleAlign: "center" }}
+      />
+      <Stack.Screen
+        name="OrderMenu"
+        component={OrderMenu}
+        options={{ headerTitleAlign: "center" }}
+      />
+      <Stack.Screen
+        name="OrderItem"
+        component={OrderItem}
+        options={{ headerTitleAlign: "center" }}
       />
     </Stack.Navigator>
   );

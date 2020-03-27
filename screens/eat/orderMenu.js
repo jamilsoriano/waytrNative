@@ -2,8 +2,7 @@ import React, { useState } from "react";
 import { Text, View, TouchableOpacity, ScrollView } from "react-native";
 import { globalStyles } from "../../styles/global";
 import Firebase from "../../firebase/firebase";
-import { ActivityIndicator, Divider } from "react-native-paper";
-import { Entypo } from "@expo/vector-icons";
+import { ActivityIndicator } from "react-native-paper";
 
 export default function OrderMenu({ navigation, route }) {
   const [menu, setMenu] = useState();
