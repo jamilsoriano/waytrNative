@@ -33,7 +33,7 @@ function createOrderStack() {
           headerTitle: "Orders",
           headerTitleAlign: "center",
           headerTransparent: true,
-          headerTitleStyle: { fontSize: 35 }
+          headerTitleStyle: { fontFamily: "raleway-bold", fontSize: 32 }
         }}
       />
       <Stack.Screen
@@ -43,7 +43,7 @@ function createOrderStack() {
           headerTitle: "",
           headerTitleAlign: "center",
           headerTransparent: true,
-          headerTitleStyle: { fontSize: 35 }
+          headerTitleStyle: { fontFamily: "raleway-bold", fontSize: 32 }
         }}
       />
     </Stack.Navigator>
@@ -103,7 +103,7 @@ function createTableStack() {
   );
 }
 
-function createEatStack({ route }) {
+function createEatStack() {
   return (
     <Stack.Navigator>
       <Stack.Screen
@@ -115,30 +115,41 @@ function createEatStack({ route }) {
         name="RestMenu"
         component={RestMenu}
         options={{
-          headerTitle: "Menu of ",
-          headerTitleAlign: "center",
+          headerTitle: "",
           headerTransparent: true
         }}
       />
       <Stack.Screen
         name="TableConfirmation"
         component={TableConfirmation}
-        options={{ headerTransparent: true, headerTitle: "" }}
+        options={{
+          headerTransparent: true,
+          headerTitle: "Enter Table Number",
+          headerTitleAlign: "center",
+          headerTitleStyle: { fontFamily: "raleway-bold", fontSize: 32 }
+        }}
       />
       <Stack.Screen
         name="Seated"
         children={createSeatedTab}
-        options={{ headerTitleAlign: "center" }}
+        options={{
+          headerTitleAlign: "center",
+          headerTitleStyle: { fontFamily: "raleway-bold", fontSize: 32 }
+        }}
       />
       <Stack.Screen
         name="OrderMenu"
         component={OrderMenu}
-        options={{ headerTitleAlign: "center" }}
+        options={{
+          headerTitleAlign: "center",
+          headerTitle: "Order Menu",
+          headerTitleStyle: { fontFamily: "raleway-bold", fontSize: 32 }
+        }}
       />
       <Stack.Screen
         name="OrderItem"
         component={OrderItem}
-        options={{ headerTitleAlign: "center" }}
+        options={{ headerTransparent: true, headerTitle: null }}
       />
     </Stack.Navigator>
   );

@@ -2,8 +2,10 @@ import React, { useState, useContext } from "react";
 import { View, Text, TextInput, TouchableOpacity } from "react-native";
 import { globalStyles } from "../../styles/global";
 import { SeatingContext } from "../../contexts/SeatingContext";
+import { useHeaderHeight } from "@react-navigation/stack";
 
 export default function TableConfirmation({ navigation, route }) {
+  const headerHeight = useHeaderHeight();
   const {
     tableNum,
     setTableNum,
@@ -34,8 +36,7 @@ export default function TableConfirmation({ navigation, route }) {
   }
 
   return (
-    <View style={globalStyles.container}>
-      <Text style={globalStyles.motto}>Enter Table Number</Text>
+    <View style={{ marginHorizontal: 15, marginTop: headerHeight + 15 }}>
       <TextInput
         style={globalStyles.logInInput}
         keyboardType="numeric"

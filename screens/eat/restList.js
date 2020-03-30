@@ -24,7 +24,7 @@ export default function RestList({ navigation }) {
     return (
       <View style={{ flex: 1 }}>
         <Searchbar
-          style={{ marginTop: 35, marginHorizontal: 12, marginBottom: 10 }}
+          style={{ marginTop: 10, marginHorizontal: 12, marginBottom: 10 }}
           onChangeText={value => {
             setSearchQuery(value);
           }}

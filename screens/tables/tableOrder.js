@@ -1,14 +1,23 @@
 import React from "react";
-import { View, ScrollView, Text } from "react-native";
+import { View, ScrollView, TouchableOpacity, Text } from "react-native";
 import { StyleSheet } from "react-native";
 import { DataTable } from "react-native-paper";
 import DropDown from "../eat/components/DBDropDown";
 import { useHeaderHeight } from "@react-navigation/stack";
+import Firebase from "../../firebase/firebase";
 
-export default function TableOrders({ route }) {
+export default function TableOrders({ navigation, route }) {
   const headerHeight = useHeaderHeight();
   let tableTotal = 0;
-  let tableOrder = route.params.orders;
+  let tableOrder = route.params.tableOrder.orders;
+
+  function completeOrder() {
+    navigation.pop();
+    Firebase.db
+      .collection("orders")
+      .doc(route.params.tableOrder.docId)
+      .update({ orderCompleted: true });
+  }
 
   return (
     <View style={styles.viewContainer}>
@@ -35,6 +44,15 @@ export default function TableOrders({ route }) {
           </DataTable.Row>
         </ScrollView>
       </DataTable>
+      <View style={{ position: "absolute", bottom: 0, left: 10, right: 10 }}>
+        <TouchableOpacity
+          onPress={() => {
+            completeOrder();
+          }}
+        >
+          <Text style={{ fontSize: 50 }}>Complete Order</Text>
+        </TouchableOpacity>
+      </View>
     </View>
   );
 }
@@ -42,10 +60,6 @@ export default function TableOrders({ route }) {
 const styles = StyleSheet.create({
   viewContainer: {
     flex: 1,
-    flexDirection: "row",
-    justifyContent: "space-between",
-    position: "absolute",
-    left: 15,
-    right: 15
+    padding: 15
   }
 });

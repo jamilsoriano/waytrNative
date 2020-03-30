@@ -6,10 +6,28 @@ import { PendingOrdersContext } from "../../../contexts/PendingOrdersContext";
 
 export default function DropDown({ order, i }) {
   const [expanded, setExpanded] = useState(false);
-  const { pendingOrders, setPendingOrders, setTotal, total } = useContext(
-    PendingOrdersContext
-  );
+  const {
+    pendingOrders,
+    setPendingOrders,
+    setTotal,
+    total,
+    socket
+  } = useContext(PendingOrdersContext);
   let TPOrders = pendingOrders;
+
+  function changeQuantity(operation) {
+    if (operation === "add") {
+      TPOrders[i].quantity = TPOrders[i].quantity + 1;
+      setTotal(total + TPOrders[i].price);
+    } else if (operation === "subtract") {
+      TPOrders[i].quantity = TPOrders[i].quantity - 1;
+      setTotal(total - TPOrders[i].price);
+    } else {
+      TPOrders.splice(i, 1);
+    }
+    socket.emit("sendTempOrder", TPOrders);
+    setPendingOrders(TPOrders);
+  }
 
   return (
     <View>
@@ -45,12 +63,10 @@ export default function DropDown({ order, i }) {
           <DataTable.Row>
             <DataTable.Cell style={{ flex: 1 }}>Quantity:</DataTable.Cell>
             <View style={styles.quantityView}>
-              {TPOrders[i].quantity > 0 ? (
+              {TPOrders[i].quantity > 1 ? (
                 <TouchableOpacity
                   onPress={() => {
-                    TPOrders[i].quantity = TPOrders[i].quantity - 1;
-                    setPendingOrders(TPOrders);
-                    setTotal(total - TPOrders[i].price);
+                    changeQuantity("subtract");
                   }}
                 >
                   <FontAwesome
@@ -71,9 +87,7 @@ export default function DropDown({ order, i }) {
 
               <TouchableOpacity
                 onPress={() => {
-                  TPOrders[i].quantity = TPOrders[i].quantity + 1;
-                  setPendingOrders(TPOrders);
-                  setTotal(total + TPOrders[i].price);
+                  changeQuantity("add");
                 }}
               >
                 <FontAwesome
@@ -84,6 +98,16 @@ export default function DropDown({ order, i }) {
                 />
               </TouchableOpacity>
             </View>
+          </DataTable.Row>
+          <DataTable.Row>
+            <TouchableOpacity
+              style={styles.removeButton}
+              onPress={() => {
+                changeQuantity("remove");
+              }}
+            >
+              <DataTable.Cell>Remove item</DataTable.Cell>
+            </TouchableOpacity>
           </DataTable.Row>
         </View>
       ) : null}
@@ -108,5 +132,9 @@ const styles = StyleSheet.create({
     height: 50,
     marginLeft: 30,
     textAlignVertical: "center"
+  },
+  removeButton: {
+    backgroundColor: "#ff6a5f",
+    borderRadius: 10
   }
 });

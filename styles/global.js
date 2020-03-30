@@ -6,7 +6,6 @@ export const globalStyles = StyleSheet.create({
     padding: 20
   },
   motto: {
-    marginTop: 70,
     marginBottom: 50,
     fontFamily: "raleway-bold",
     textAlign: "center",

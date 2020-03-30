@@ -11,12 +11,11 @@ export default function OrderDetails({ route }) {
   return (
     <ScrollView
       style={{
-        flex: 1,
         paddingHorizontal: 15,
         backgroundColor: "#FFFFFF"
       }}
     >
-      <Card style={{ marginTop: 35 }}>
+      <Card style={{ marginTop: 10 }}>
         <Title style={{ textAlign: "center", fontSize: 35, paddingTop: 10 }}>
           {restName}
         </Title>

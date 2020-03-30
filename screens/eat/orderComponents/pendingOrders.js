@@ -1,8 +1,7 @@
 import React, { useEffect, useContext } from "react";
-import { View, ScrollView, Text } from "react-native";
-import { TouchableOpacity, StyleSheet } from "react-native";
+import { View, ScrollView, StyleSheet } from "react-native";
 import { DataTable } from "react-native-paper";
-import { globalStyles } from "../../../styles/global";
+import { Entypo, MaterialCommunityIcons } from "@expo/vector-icons";
 import io from "socket.io-client";
 import { DBOrdersContext } from "../../../contexts/dbOrdersContext";
 import Firebase from "../../../firebase/firebase";
@@ -10,6 +9,8 @@ import { PendingOrdersContext } from "../../../contexts/PendingOrdersContext";
 import DropDown from "../components/pendingDropDown";
 import { UserContext } from "../../../contexts/UserContext";
 import { SeatingContext } from "../../../contexts/SeatingContext";
+import { FloatingAction } from "react-native-floating-action";
+import handleFAB from "./handleFAB";
 
 let socket;
 
@@ -33,6 +34,35 @@ export default function PendingOrders({ navigation }) {
 
   const ENDPOINT = "http://192.168.1.31:4000";
   let currentDateTime = Math.round(new Date().getTime() / 1000);
+  let data = {
+    navigation,
+    restName,
+    restUID,
+    pendingOrders,
+    dbOrders,
+    tableNum,
+    socket,
+    currentUserId,
+    setPendingOrders,
+    setTotal,
+    orderDocId
+  };
+  const actions = [
+    {
+      text: "Add to order",
+      name: "menu",
+      position: 1,
+      icon: <Entypo name="menu" size={22} color="white" />,
+      color: "#5CDC58"
+    },
+    {
+      text: "Send order to the kitchen",
+      name: "sendOrder",
+      position: 2,
+      icon: <MaterialCommunityIcons name="send" size={18} color="white" />,
+      color: "#5CDC58"
+    }
+  ];
 
   useEffect(() => {
     socket = io(ENDPOINT);
@@ -54,6 +84,12 @@ export default function PendingOrders({ navigation }) {
 
     socket.on("order", order => {
       setPendingOrders(order);
+      let Total = 0;
+      order.map(item => {
+        Total = Total + item.price * item.quantity;
+        return Total;
+      });
+      setTotal(Total);
     });
 
     socket.on("orderSent", () => {
@@ -90,47 +126,6 @@ export default function PendingOrders({ navigation }) {
       });
   }, []);
 
-  function sendOrder() {
-    if (pendingOrders.length > 0) {
-      if (dbOrders.length === 0) {
-        Firebase.sendOrder({
-          orders: pendingOrders,
-          restaurantId: restUID,
-          restName,
-          tableNum,
-          uid: currentUserId.uid,
-          orderDateTime: new Date(),
-          orderCompleted: false
-        });
-      } else {
-        pendingOrders.map(item => {
-          dbOrders.map(order => {
-            if (order.item === item.item) {
-              item.quantity = item.quantity + order.quantity;
-            }
-            return order;
-          });
-          return item;
-        });
-        let concat = pendingOrders.concat(dbOrders);
-        let updatedOrders = Array.from(
-          new Set(concat.map(order => order.item))
-        ).map(i => {
-          return concat.find(order => order.item === i);
-        });
-
-        Firebase.db
-          .collection("orders")
-          .doc(orderDocId)
-          .update({ orders: updatedOrders });
-      }
-
-      setPendingOrders([]);
-      setTotal(0);
-      socket.emit("sendOrder", null, () => {});
-    }
-  }
-
   return (
     <View style={{ flex: 1 }}>
       <View style={styles.viewContainer}></View>
@@ -157,50 +152,14 @@ export default function PendingOrders({ navigation }) {
           </DataTable.Row>
         </ScrollView>
       </DataTable>
-
-      <View
-        style={{
-          flex: 1,
-          flexDirection: "row",
-          justifyContent: "space-around",
-          position: "absolute",
-          bottom: 20,
-          left: 20,
-          right: 20
+      <FloatingAction
+        color="#5CDC58"
+        actions={actions}
+        overlayColor="rgba(255, 255, 255, 0)"
+        onPressItem={name => {
+          handleFAB(name, data);
         }}
-      >
-        <TouchableOpacity
-          onPress={() => {
-            navigation.navigate("OrderMenu", {
-              restName,
-              restUID
-            });
-          }}
-          style={{
-            ...globalStyles.logInButton,
-            minWidth: 120
-          }}
-        >
-          <Text style={globalStyles.buttonText}>Menu</Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          onPress={() => sendOrder()}
-          style={{
-            ...globalStyles.logInButton,
-            minWidth: 120
-          }}
-        >
-          <Text style={globalStyles.buttonText}>Send Order</Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          style={{
-            ...globalStyles.logInButton,
-            minWidth: 120
-          }}
-        >
-          <Text style={globalStyles.buttonText}>Call Staff</Text>
-        </TouchableOpacity>
-      </View>
+      />
     </View>
   );
 }

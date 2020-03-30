@@ -11,7 +11,7 @@ import AccountStackCred from "./routes/accountCredStack";
 import SignUpContextProvider from "./contexts/SignUpContext";
 import RestaurantListContextProvider from "./contexts/RestaurantListContext";
 import PendingOrdersContextProvider from "./contexts/PendingOrdersContext";
-import { YellowBox } from "react-native";
+import { YellowBox, StatusBar } from "react-native";
 import _ from "lodash";
 import DBOrdersContextProvider from "./contexts/dbOrdersContext";
 import SeatingContextProvider from "./contexts/SeatingContext";
@@ -64,6 +64,7 @@ export default function App() {
               <SeatingContextProvider>
                 <PendingOrdersContextProvider>
                   <DBOrdersContextProvider>
+                    <StatusBar backgroundColor="#79B45D" />
                     <TabNavigation user={user} styles={globalStyles.tabNav} />
                   </DBOrdersContextProvider>
                 </PendingOrdersContextProvider>

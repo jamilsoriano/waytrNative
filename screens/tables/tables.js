@@ -23,6 +23,7 @@ export default function Tables({ navigation }) {
   let tempTableOrders = [];
 
   useEffect(() => {
+    console.log("reloaded");
     if (!restData.hasOwnProperty("restUID")) {
       Firebase.db
         .collection("restaurants")
@@ -55,7 +56,8 @@ export default function Tables({ navigation }) {
                 change.doc.data().orderCompleted === false
               ) {
                 let tableNum = +change.doc.data().tableNum;
-                tempTableOrders.splice(tableNum - 1, 1, change.doc.data());
+                let changeDoc = { ...change.doc.data(), docId: change.doc.id };
+                tempTableOrders.splice(tableNum - 1, 1, changeDoc);
                 return tempTableOrders;
               } else {
                 Firebase.db
@@ -63,7 +65,10 @@ export default function Tables({ navigation }) {
                   .doc(change.doc.id)
                   .update({ orderCompleted: true });
               }
-            } else if (change.type === "modified") {
+            } else if (
+              change.type === "modified" &&
+              change.doc.data().orderCompleted === true
+            ) {
               tempTableOrders[change.doc.data().tableNum - 1] = {
                 orderCompleted: true
               };
@@ -74,7 +79,7 @@ export default function Tables({ navigation }) {
           setDataLoaded(true);
         });
     }
-  }, [restData, dataLoaded]);
+  }, []);
 
   if (dataLoaded) {
     return (
@@ -83,7 +88,6 @@ export default function Tables({ navigation }) {
           {tableOrders.map((tableOrder, i) =>
             tableOrder.orderCompleted ? (
               <TouchableOpacity
-                onPress={() => {}}
                 key={i}
                 style={{ ...styles.tableCard, backgroundColor: "#5CDC58" }}
               >
@@ -93,7 +97,7 @@ export default function Tables({ navigation }) {
             ) : (
               <TouchableOpacity
                 onPress={() => {
-                  navigation.navigate("TableOrders", tableOrder);
+                  navigation.navigate("TableOrders", { tableOrder });
                 }}
                 key={i}
                 style={{ ...styles.tableCard, backgroundColor: "#fe5956" }}

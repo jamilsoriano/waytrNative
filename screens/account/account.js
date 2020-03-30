@@ -41,25 +41,6 @@ export default function Account() {
   if (!isLoading) {
     return (
       <ScrollView style={styles.container}>
-        <View
-          style={{
-            flex: 1,
-            flexDirection: "row",
-            justifyContent: "space-evenly"
-          }}
-        >
-          <Text style={styles.heading}>Account</Text>
-          <View style={{ marginTop: 50 }}>
-            <TouchableOpacity
-              style={{ height: 50 }}
-              onPress={() => {
-                setEditMode(true);
-              }}
-            >
-              <MaterialCommunityIcons name="pencil-circle-outline" size={30} />
-            </TouchableOpacity>
-          </View>
-        </View>
         <View style={styles.iconTextFlex}>
           <FontAwesome name="user-circle-o" size={30} style={styles.icon} />
           <Text style={styles.userInfoText}>

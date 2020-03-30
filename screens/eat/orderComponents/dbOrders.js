@@ -1,20 +1,37 @@
 import React, { useContext } from "react";
-import { View, ScrollView, Text } from "react-native";
-import { TouchableOpacity, StyleSheet } from "react-native";
+import { View, ScrollView } from "react-native";
+import { StyleSheet } from "react-native";
 import { DataTable, ActivityIndicator } from "react-native-paper";
-import { globalStyles } from "../../../styles/global";
-import Firebase from "../../../firebase/firebase";
+import { MaterialCommunityIcons } from "@expo/vector-icons";
 import DropDown from "../components/DBDropDown";
 import { DBOrdersContext } from "../../../contexts/dbOrdersContext";
+import { FloatingAction } from "react-native-floating-action";
+import handleFAB from "./handleFAB";
 
-export default function DBOrders() {
+export default function DBOrders({ navigation }) {
   const { isLoading, dbOrders, orderDocId } = useContext(DBOrdersContext);
+  const actions = [
+    {
+      text: "Get Bill",
+      name: "bill",
+      position: 1,
+      icon: <MaterialCommunityIcons name="receipt" size={22} color="white" />,
+      color: "#5CDC58"
+    },
+    {
+      text: "Call Staff",
+      name: "staff",
+      position: 2,
+      icon: <MaterialCommunityIcons name="hand" size={22} color="white" />,
+      color: "#5CDC58"
+    }
+  ];
 
   let DBtotal = 0;
+  let data = { dbOrders, orderDocId, navigation };
 
   return (
     <View style={{ flex: 1 }}>
-      <View style={styles.viewContainer}></View>
       <DataTable>
         <DataTable.Header>
           <DataTable.Title style={{ flex: 1 }}></DataTable.Title>
@@ -48,47 +65,14 @@ export default function DBOrders() {
           />
         )}
       </DataTable>
-      <View
-        style={{
-          flex: 1,
-          flexDirection: "row",
-          justifyContent: "space-around",
-          position: "absolute",
-          bottom: 20,
-          left: 20,
-          right: 20
+      <FloatingAction
+        color="#5CDC58"
+        actions={actions}
+        overlayColor="rgba(255, 255, 255, 0)"
+        onPressItem={name => {
+          handleFAB(name, data);
         }}
-      >
-        <TouchableOpacity
-          style={{
-            ...globalStyles.logInButton,
-            minWidth: 120
-          }}
-        >
-          <Text style={globalStyles.buttonText}>Menu</Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          onPress={() => {
-            if (dbOrders.length > 0) {
-              Firebase.completeOrder({ dbOrders, orderDocId });
-            }
-          }}
-          style={{
-            ...globalStyles.logInButton,
-            minWidth: 120
-          }}
-        >
-          <Text style={globalStyles.buttonText}>Bill</Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          style={{
-            ...globalStyles.logInButton,
-            minWidth: 120
-          }}
-        >
-          <Text style={globalStyles.buttonText}>Call Staff</Text>
-        </TouchableOpacity>
-      </View>
+      />
     </View>
   );
 }

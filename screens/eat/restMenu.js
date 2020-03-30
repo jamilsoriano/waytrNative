@@ -2,15 +2,12 @@ import React, { useState } from "react";
 import { Text, View, TouchableOpacity, ScrollView } from "react-native";
 import { globalStyles } from "../../styles/global";
 import Firebase from "../../firebase/firebase";
-import { ActivityIndicator, Divider } from "react-native-paper";
-import { Entypo } from "@expo/vector-icons";
+import { ActivityIndicator } from "react-native-paper";
 
 export default function RestMenu({ navigation, route }) {
   const [menu, setMenu] = useState();
   const [isLoading, setIsLoading] = useState(true);
   let restUID = route.params.restUID;
-  const restTableMax = route.params.restTableMax;
-  const restTableMin = route.params.restTableMin;
   const restName = route.params.restName;
 
   Firebase.getRestaurantMenu(restUID)
@@ -30,8 +27,17 @@ export default function RestMenu({ navigation, route }) {
   if (!isLoading && menu) {
     if (Object.keys(menu).length > 0) {
       return (
-        <View style={{ flex: 1, marginTop: 80 }}>
-          <Divider />
+        <View style={{ flex: 1, marginTop: 10 }}>
+          <Text
+            style={{
+              marginBottom: 10,
+              textAlign: "center",
+              fontFamily: "raleway-bold",
+              fontSize: 32
+            }}
+          >
+            {restName}
+          </Text>
           <ScrollView>
             {menu.items.map((item, i) => (
               <View key={i} style={{ marginHorizontal: 25, marginVertical: 8 }}>
@@ -46,7 +52,9 @@ export default function RestMenu({ navigation, route }) {
                     {menu.items[i]}
                   </Text>
 
-                  <Text style={{ textAlign: "center" }}>${menu.prices[i]}</Text>
+                  <Text style={{ textAlign: "right" }}>
+                    ${menu.prices[i].toFixed(2)}
+                  </Text>
                 </View>
                 <Text style={{ fontFamily: "raleway-italic", marginRight: 50 }}>
                   {menu.descriptions[i]}

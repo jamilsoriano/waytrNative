@@ -110,11 +110,10 @@ export default function OrderItem({ navigation, route }) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 10,
-    paddingHorizontal: 10
+    padding: 10
   },
   heading: {
-    marginTop: 45,
+    marginTop: 30,
     fontFamily: "raleway-bold",
     textAlign: "center",
     fontSize: 25,
