@@ -1,15 +1,11 @@
 import React, { useState, useContext, useEffect } from "react";
-import {
-  Text,
-  View,
-  TouchableOpacity,
-  StyleSheet,
-  ScrollView
-} from "react-native";
+import { Text, View, TouchableOpacity } from "react-native";
+import { StyleSheet, ScrollView } from "react-native";
 import Firebase from "../../firebase/firebase";
 import { UserContext } from "../../contexts/UserContext";
 import { ActivityIndicator } from "react-native-paper";
 import { useHeaderHeight } from "@react-navigation/stack";
+import { FontAwesome } from "@expo/vector-icons";
 
 export default function Tables({ navigation }) {
   const headerHeight = useHeaderHeight();
@@ -21,9 +17,7 @@ export default function Tables({ navigation }) {
 
   let tableRange = [];
   let tempTableOrders = [];
-
   useEffect(() => {
-    console.log("reloaded");
     if (!restData.hasOwnProperty("restUID")) {
       Firebase.db
         .collection("restaurants")
@@ -41,7 +35,10 @@ export default function Tables({ navigation }) {
       );
 
       tableRange.map(() => {
-        tempTableOrders = [...tempTableOrders, { orderCompleted: true }];
+        tempTableOrders = [
+          ...tempTableOrders,
+          { orderCompleted: true, assistanceNeeded: false }
+        ];
         return tempTableOrders;
       });
       Firebase.db
@@ -49,7 +46,23 @@ export default function Tables({ navigation }) {
         .where("restaurantId", "==", restData.restUID)
         .onSnapshot(snapshot => {
           snapshot.docChanges().forEach(change => {
-            if (change.type === "added") {
+            console.log(change.type, change.doc.data());
+            if (change.type === "modified") {
+              if (change.doc.data().orderCompleted === true) {
+                tempTableOrders[change.doc.data().tableNum - 1] = {
+                  orderCompleted: true
+                };
+              } else if (change.doc.data().assistanceNeeded === true) {
+                tempTableOrders[
+                  change.doc.data().tableNum - 1
+                ].assistanceNeeded = true;
+              } else if (change.doc.data().assistanceNeeded === false) {
+                tempTableOrders[
+                  change.doc.data().tableNum - 1
+                ].assistanceNeeded = false;
+              }
+              return tempTableOrders;
+            } else if (change.type === "added") {
               if (
                 currentDateTime - change.doc.data().orderDateTime.seconds <
                   3600 &&
@@ -65,21 +78,13 @@ export default function Tables({ navigation }) {
                   .doc(change.doc.id)
                   .update({ orderCompleted: true });
               }
-            } else if (
-              change.type === "modified" &&
-              change.doc.data().orderCompleted === true
-            ) {
-              tempTableOrders[change.doc.data().tableNum - 1] = {
-                orderCompleted: true
-              };
-              return tempTableOrders;
             }
           });
           setTableOrders(tempTableOrders);
           setDataLoaded(true);
         });
     }
-  }, []);
+  }, [restData]);
 
   if (dataLoaded) {
     return (
@@ -87,24 +92,49 @@ export default function Tables({ navigation }) {
         <View style={styles.tableLayout}>
           {tableOrders.map((tableOrder, i) =>
             tableOrder.orderCompleted ? (
-              <TouchableOpacity
-                key={i}
-                style={{ ...styles.tableCard, backgroundColor: "#5CDC58" }}
-              >
-                <Text style={styles.tableCardText}>{i + 1}</Text>
-                <Text style={styles.tableStatusText}>EMPTY</Text>
-              </TouchableOpacity>
+              <View key={i}>
+                <TouchableOpacity
+                  style={{ ...styles.tableCard, backgroundColor: "#5CDC58" }}
+                >
+                  <Text style={styles.tableCardText}>{i + 1}</Text>
+                  <Text style={styles.tableStatusText}>EMPTY</Text>
+                </TouchableOpacity>
+                {tableOrder.assistanceNeeded ? (
+                  <View
+                    style={{
+                      position: "absolute",
+                      justifyContent: "center",
+                      left: 150,
+                      top: 0
+                    }}
+                  >
+                    <FontAwesome name="exclamation" size={70} color="red" />
+                  </View>
+                ) : null}
+              </View>
             ) : (
-              <TouchableOpacity
-                onPress={() => {
-                  navigation.navigate("TableOrders", { tableOrder });
-                }}
-                key={i}
-                style={{ ...styles.tableCard, backgroundColor: "#fe5956" }}
-              >
-                <Text style={styles.tableCardText}>{i + 1}</Text>
-                <Text style={styles.tableStatusText}>OCCUPIED</Text>
-              </TouchableOpacity>
+              <View key={i}>
+                <TouchableOpacity
+                  onPress={() => {
+                    navigation.navigate("TableOrders", { tableOrder });
+                  }}
+                  style={{ ...styles.tableCard, backgroundColor: "#fe5956" }}
+                >
+                  <Text style={styles.tableCardText}>{i + 1}</Text>
+                  <Text style={styles.tableStatusText}>OCCUPIED</Text>
+                </TouchableOpacity>
+                {tableOrder.assistanceNeeded ? (
+                  <View
+                    style={{
+                      position: "absolute",
+                      justifyContent: "center",
+                      left: 140
+                    }}
+                  >
+                    <FontAwesome name="exclamation" size={85} />
+                  </View>
+                ) : null}
+              </View>
             )
           )}
         </View>

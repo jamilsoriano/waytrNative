@@ -1,23 +1,38 @@
 import React from "react";
-import { View, ScrollView, TouchableOpacity, Text } from "react-native";
+import { View, ScrollView } from "react-native";
+import { Entypo, MaterialCommunityIcons } from "@expo/vector-icons";
 import { StyleSheet } from "react-native";
 import { DataTable } from "react-native-paper";
 import DropDown from "../eat/components/DBDropDown";
 import { useHeaderHeight } from "@react-navigation/stack";
-import Firebase from "../../firebase/firebase";
+import { FloatingAction } from "react-native-floating-action";
+import handleFAB from "../eat/orderComponents/handleFAB";
 
 export default function TableOrders({ navigation, route }) {
   const headerHeight = useHeaderHeight();
   let tableTotal = 0;
   let tableOrder = route.params.tableOrder.orders;
-
-  function completeOrder() {
-    navigation.pop();
-    Firebase.db
-      .collection("orders")
-      .doc(route.params.tableOrder.docId)
-      .update({ orderCompleted: true });
-  }
+  let data = {
+    navigation,
+    orderDocId: route.params.tableOrder.docId,
+    dbOrders: tableOrder
+  };
+  const actions = [
+    {
+      text: "Clear Table",
+      name: "clearTable",
+      position: 1,
+      icon: <Entypo name="menu" size={22} color="white" />,
+      color: "#5CDC58"
+    },
+    {
+      text: "Clear Staff Required Notification",
+      name: "clearStaff",
+      position: 2,
+      icon: <MaterialCommunityIcons name="send" size={18} color="white" />,
+      color: "#5CDC58"
+    }
+  ];
 
   return (
     <View style={styles.viewContainer}>
@@ -44,15 +59,15 @@ export default function TableOrders({ navigation, route }) {
           </DataTable.Row>
         </ScrollView>
       </DataTable>
-      <View style={{ position: "absolute", bottom: 0, left: 10, right: 10 }}>
-        <TouchableOpacity
-          onPress={() => {
-            completeOrder();
-          }}
-        >
-          <Text style={{ fontSize: 50 }}>Complete Order</Text>
-        </TouchableOpacity>
-      </View>
+
+      <FloatingAction
+        color="#5CDC58"
+        actions={actions}
+        overlayColor="rgba(255, 255, 255, 0)"
+        onPressItem={name => {
+          handleFAB(name, data);
+        }}
+      />
     </View>
   );
 }

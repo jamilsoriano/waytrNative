@@ -24,6 +24,15 @@ export default function handleFAB(name, data) {
         navigation.popToTop();
       }
       break;
+    case "clearTable":
+      if (dbOrders.length > 0) {
+        Firebase.completeOrder({
+          dbOrders: dbOrders,
+          orderDocId: orderDocId
+        });
+        navigation.popToTop();
+      }
+      break;
     case "menu":
       navigation.navigate("OrderMenu", {
         restName: restName,
@@ -69,6 +78,18 @@ export default function handleFAB(name, data) {
         setTotal(0);
         socket.emit("sendOrder", null, () => {});
       }
+      break;
+    case "staff":
+      Firebase.db
+        .collection("orders")
+        .doc(orderDocId)
+        .update({ assistanceNeeded: true });
+      break;
+    case "clearStaff":
+      Firebase.db
+        .collection("orders")
+        .doc(orderDocId)
+        .update({ assistanceNeeded: false });
       break;
   }
 }
